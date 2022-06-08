@@ -1,29 +1,29 @@
 {
-    "heroes": [
-        {
-            "id": 1,
-            "name": "Первый герой",
-            "description": "Первый герой в рейтинге!",
-            "element": "fire"
-        },
-        {
-            "id": 2,
-            "name": "Неизвестный герой",
-            "description": "Скрывающийся в тени",
-            "element": "wind"
-        },
-        {
-            "id": 3,
-            "name": "Морской герой",
-            "description": "Как аквамен, но не из DC",
-            "element": "water"
-        }
-    ],
-    "filters": [
-        "all",
-        "fire",
-        "water",
-        "wind",
-        "earth"
-    ]
+  "heroes": [
+    {
+      "id": "0ef216c4-e96b-45eb-9221-65f2c143fbe1",
+      "name": "Aquaman",
+      "description": "to swim",
+      "element": "water"
+    },
+    {
+      "id": "83cf9bcf-68c9-4555-8fd6-aa6ed74b67a5",
+      "name": "Wolwerine",
+      "description": "to fight",
+      "element": "earth"
+    },
+    {
+      "id": "bccae924-c315-4edd-8467-4e377f734faf",
+      "name": "SexyGirl",
+      "description": "to fuck",
+      "element": "fire"
+    }
+  ],
+  "filters": [
+    "all",
+    "fire",
+    "water",
+    "wind",
+    "earth"
+  ]
 }

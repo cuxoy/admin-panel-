@@ -1,10 +1,17 @@
-import {useHttp} from '../../hooks/http.hook';
-import { useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useHttp } from "../../hooks/http.hook";
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { TransitionGroup, CSSTransition} from "react-transition-group";
 
-import { heroesFetching, heroesFetched, heroesFetchingError, heroDeleted } from '../../actions';
+import {
+  heroesFetching,
+  heroesFetched,
+  heroesFetchingError,
+  heroDeleted,
+} from "../../actions";
 import HeroesListItem from "../heroesListItem/HeroesListItem";
-import Spinner from '../spinner/Spinner';
+import Spinner from "../spinner/Spinner";
+import "./style.scss";
 
 // Задача для этого компонента:
 // При клике на "крестик" идет удаление персонажа из общего состояния
@@ -12,45 +19,56 @@ import Spinner from '../spinner/Spinner';
 // Удаление идет и с json файла при помощи метода DELETE
 
 const HeroesList = () => {
-    const {heroes, heroesLoadingStatus} = useSelector(state => state);
-    const dispatch = useDispatch();
-    const {request} = useHttp();
+  const { heroes, heroesLoadingStatus } = useSelector((state) => state);
+  const dispatch = useDispatch();
+  const { request } = useHttp();
 
-    useEffect(() => {
-        dispatch(heroesFetching());
-        request("http://localhost:3001/heroes")
-            .then(data => dispatch(heroesFetched(data)))
-            .catch(() => dispatch(heroesFetchingError()))
+  useEffect(() => {
+    dispatch(heroesFetching());
+    request("http://localhost:3001/heroes")
+      .then((data) => dispatch(heroesFetched(data)))
+      .catch(() => dispatch(heroesFetchingError()));
 
-        // eslint-disable-next-line
-    }, []);
+    // eslint-disable-next-line
+  }, []);
+  const heroesCheck = heroes? true : false;
+  const onDelete = (id) => {
+    request(
+      request(`http://localhost:3001/heroes/${id}`, "DELETE")
+        .then(dispatch(heroDeleted(id)))
+        .catch(console.log("error"))
+    );
+    //  dispatch(heroDeleted(id))
+  };
 
-    const onDelete = (id) =>{
-     dispatch(heroDeleted(id))
+  if (heroesLoadingStatus === "loading") {
+    return <Spinner />;
+  } else if (heroesLoadingStatus === "error") {
+    return <h5 className="text-center mt-5">Ошибка загрузки</h5>;
+  }
+
+  const renderHeroesList = (arr) => {
+    if (arr.length === 0) {
+      return <h5 className="text-center mt-5">Героев пока нет</h5>;
     }
 
-    if (heroesLoadingStatus === "loading") {
-        return <Spinner/>;
-    } else if (heroesLoadingStatus === "error") {
-        return <h5 className="text-center mt-5">Ошибка загрузки</h5>
-    }
+    return arr.map(({ id, ...props }) => {
+      return (
+        <CSSTransition timeout={700} classNames="my-node">
+            <HeroesListItem key={id} {...props} onDelete={() => onDelete(id)} />
+        </CSSTransition>
 
-    const renderHeroesList = (arr) => {
-        if (arr.length === 0) {
-            return <h5 className="text-center mt-5">Героев пока нет</h5>
-        }
+      );
+    });
+  };
 
-        return arr.map(({id, ...props}) => {
-            return <HeroesListItem key={id} {...props} onDelete={()=>onDelete(id)}/>
-        })
-    }
+  const elements = renderHeroesList(heroes);
 
-    const elements = renderHeroesList(heroes);
-    return (
-        <ul>
-            {elements}
-        </ul>
-    )
-}
+  return (
+    <TransitionGroup component="ul">
+        {elements}
+    </TransitionGroup>
+  );
+};
 
 export default HeroesList;

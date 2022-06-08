@@ -1,6 +1,8 @@
 import { heroAdded } from "../../actions";
 import { useDispatch } from 'react-redux';
 import { v4 as uuidv4 } from 'uuid';
+import {useHttp} from '../../hooks/http.hook';
+import { useState } from 'react';
 
 // Задача для этого компонента:
 // Реализовать создание нового героя с введенными данными. Он должен попадать
@@ -13,8 +15,10 @@ import { v4 as uuidv4 } from 'uuid';
 // данных из фильтров
 
 const HeroesAddForm = () => {
-
     const dispatch = useDispatch();
+    const {request} = useHttp()
+
+   
     
     const onAddHero = (event)=>{
             event.preventDefault();
@@ -22,7 +26,11 @@ const HeroesAddForm = () => {
                             name:event.target.name.value,
                             description: event.target.text.value,
                             element: event.target.element.value}
-            dispatch(heroAdded(newHero))
+            // dispatch(heroAdded(newHero))
+            request("http://localhost:3001/heroes", "POST", JSON.stringify(newHero))
+            .then(dispatch(heroAdded(newHero)))
+            .catch(console.log('error'))
+            
           }
     return (
         <form onSubmit={onAddHero} className="border p-4 shadow-lg rounded">
